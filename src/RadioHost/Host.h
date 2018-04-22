@@ -8,6 +8,7 @@
 #include <chrono>
 #include <thread>
 #include <time.h>
+#include <unistd.h>
 
 #include "note.h"
 #include "music_handler.h"
@@ -30,7 +31,6 @@ class Host {
 		time_t time_started;
 		time_t seconds_running;
 		music_handler music;
-		//stream* stream_callback;
 
 		virtual void announce_start() = 0;
 		virtual void announce_next_song() = 0;

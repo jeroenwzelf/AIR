@@ -27,7 +27,7 @@ band::band(song S) : Song(S) {
 	improv_drums(0xDD);
 	improv_bass(0xCC);
 	improv_chords(chordvol);
-	improv_arpeggio(0xAA);
+	improv_arpeggio(0xBB);
 	improv_solos(0xCC);
 	improv_pad(padvol);
 }

@@ -13,12 +13,10 @@ std::ostream &operator<<(std::ostream& s, const hosts::name& n) {
 }
 
 void Host::start_stream() {
-	//while (stream_callback->callback()) 
 	time_started = time(0);
 	music.nowplaying = true;
 	music.time_remaining = 12;
-	while (true)
-		update();
+	while (true) update();
 }
 
 void Host::update() {
@@ -35,7 +33,7 @@ void Host::update() {
 	// normal stream events
 	else {
 		if (!music.nowplaying) music.play_new_song();
-		else if (music.time_remaining == 6) {
+		else if (music.time_remaining == 10) {
 			announce_next_song();
 		}
 		else if (seconds_running > 1200) {
@@ -45,11 +43,11 @@ void Host::update() {
 }
 
 void Host::say(std::string text) {
-	if (seconds_running > 12) music.set_song_volume(95);
+	music.set_song_volume(80);
 	int pid = fork();
 	if( pid < 0 ) throw;	// failed to fork
 	else if (pid == 0) {
-		system(("lib/flite/bin/flite -voice" + vox + "\" " + text + " \"").c_str());
+		system(("lib/flite/bin/flite --setf int_f0_target_mean=145 -voice " + vox + " \" " + text + " \"").c_str());
 		music.set_song_volume(100);
 		_Exit(EXIT_FAILURE);
 	}

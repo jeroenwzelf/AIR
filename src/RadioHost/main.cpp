@@ -12,12 +12,12 @@ int main(int argc, char* argv[]) {
 	static const int flagcount = 1;
 	bool TEST_SONG = false;
 	bool ICECAST = false;
-	bool TWITCH = false;
+	//bool TWITCH = false;
 	for (int i=1; i<1+flagcount; ++i) {
 		if (argc > i) {
 			if (strcmp(argv[i], "-t") == 0) TEST_SONG = true;
 			if (strcmp(argv[i], "-icecast") == 0) ICECAST = true;
-			if (strcmp(argv[i], "-twitch") == 0) TWITCH = true;
+			//if (strcmp(argv[i], "-twitch") == 0) TWITCH = true;
 		}
 	}
 
@@ -35,7 +35,8 @@ int main(int argc, char* argv[]) {
 				_Exit(EXIT_FAILURE);
 			}
 		}
-		else if (TWITCH) system("./twitch_streaming.sh");
+		//else if (TWITCH) system("./twitch_streaming.sh");
+		std::cout << "Starting stream..." << std::endl;
 		stream S;
 		S.start_stream();
 	}

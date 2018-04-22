@@ -55,8 +55,6 @@ std::string generateMIDI::generate(int songsize) {
 	std::cout << "generating .midi file..." << std::endl;
     file.AddLoopStart();
 
-    rnd_name();
-
     /* -- TEMPO, LENGTH, TIME SIGNATURE (4/4) -- */
     // decide tempo
     float bpm = random(75, 175);
@@ -68,6 +66,7 @@ std::string generateMIDI::generate(int songsize) {
     unsigned beats = ( (static_cast<int>(bps * songsize) - 1 * 4) | 15 ) + 1;
 
     /* -- ASK COMPOSER TO WRITE SONG -- */
+    printf("generating song structure\n");
     song Song(beats);
 
     /*std::cout << "beats: " << beats << std::endl
@@ -75,6 +74,7 @@ std::string generateMIDI::generate(int songsize) {
     			<< "arrangement: " << Song.p.chords.size() << " chords. " << std::endl;*/
 
     /* -- CASTING BAND -- */
+    printf("casting and training band...\n");
     band Band(Song);
     int patchbank = 0;
     patch(Band.drummer()->instrument, 9);
@@ -83,6 +83,7 @@ std::string generateMIDI::generate(int songsize) {
 		++patchbank;
 	}
 
+	printf("performing song...\n");
     /* -- BAND PLAYS ALL PARTS TOGETHER -- */
     for (unsigned i=0; i<beats; ++i) {
     	update_notes();
@@ -98,14 +99,18 @@ std::string generateMIDI::generate(int songsize) {
 	    file[0].AddDelay(delay);
     }
 
+    printf("generating new song name...\n");
     std::string name = rnd_name();
     for (unsigned i=0; i < name.length(); ++i) {
     	switch(name[i]) {
-    		case ' ': name[i] = '_';		break;
-    		case '\'': name.erase(i, 1);	break;
-    		case '\"': name.erase(i, 1);	break;
+    		case '.':
+    		case ',':
+    		case ' ':
+    		case '\"':
+    		case '\'': name[i] = '_';		break;
     	}
     }
+    std::cout << "name is " << name << std::endl;
 
     file.AddLoopEnd();
     file.Finish();
@@ -150,6 +155,6 @@ std::string generateMIDI::rnd_name() {
 	}
 	std::string name = "";
 	do { name = tracks[random(0, tracks.size())].asString();
-	} while (!name.empty());
+	} while (name.empty());
 	return name;
 }

@@ -25,10 +25,10 @@ inline void RYAN_ELWICK::announce_start() {
 inline void RYAN_ELWICK::announce_next_song() {
 	std::string a;
 	switch(random(0, 3)) {
-		case 0: a = "Wow. That was a great song. I especially loved that part where it went 0101101010eeeeeeee1101010101rrrtfffffff. It really makes you think about the bigger picture. I've got another very inspirational tune for you coming up."; break;
-		case 1: a = "Always good to hear that band playing, they always bring me a lot of joy. We will be continuing with another one of their tunes. Coming to you live, performed right here. Right now."; break;
-		case 2: a = "How is everybody doing? The sun is shining and it's pretty hot out there, ouch, don't burn yourself. I think you will dig this next tune, it's straight fire."; break;
-		case 3: a = "That was such a great song. Good to hear that band finally coming together again to create something that stunning. I am really looking forward to this next song, because it's from my favorite album that just came out 10 seconds ago. I hope you like this song just as I do. It's called, bandana banana bombana. Here we go!"; break;
+		case 0: a = "Wow." + music.current_song + " was a great song. I especially loved that part where it went 0101101010eeeeeeee1101010101rrrtfffffff. It really makes you think about the bigger picture. I've got another very inspirational tune for you coming up."; break;
+		case 1: a = "Always good to hear that band playing, they always bring me a lot of joy. We will be continuing with another one of their tunes called " + music.current_song + " Coming to you live, performed right here. Right now."; break;
+		case 2: a = "How is everybody doing? The sun is shining and it's pretty hot out there, ouch, don't burn yourself. I think you will dig this next tune: " + music.current_song + ", it's straight fire."; break;
+		case 3: a = "That was such a great song. Good to hear that band finally coming together again to create something that stunning. I am really looking forward to this next song, because it's from my favorite album that just came out 10 seconds ago. I hope you like this song just as I do. It's called, " + music.current_song + ". Here we go!"; break;
 	}
 	say(a);
 }
