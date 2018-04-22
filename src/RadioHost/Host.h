@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <chrono>
 #include <thread>
+#include <time.h>
 
 #include "note.h"
 #include "music_handler.h"
@@ -26,6 +27,8 @@ class Host {
 		void say(std::string);
 		void update();
 
+		time_t time_started;
+		time_t seconds_running;
 		music_handler music;
 		//stream* stream_callback;
 

@@ -80,14 +80,12 @@ void progression::generate(int length, int key_change_chance) {
 			add_chord(get_chord_degree(random(1, 7)));
 			i--;
 		}
-		if (key_change_chance > 0 && chance(key_change_chance)) {
+		if (!chords.empty() && key_change_chance > 0 && chance(key_change_chance)) {
 			change_key(scale(chords.back().root(), scales::random_scaletype()));
 			key_change_chance -= 20;
 		}
 	}
 }
-
-
 
 
 /* --- ALL POPULAR PROGRESSIONS --- */

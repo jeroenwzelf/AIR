@@ -14,35 +14,43 @@ std::ostream &operator<<(std::ostream& s, const hosts::name& n) {
 
 void Host::start_stream() {
 	//while (stream_callback->callback()) 
+	time_started = time(0);
+	music.nowplaying = true;
+	music.time_remaining = 12;
 	while (true)
 		update();
 }
 
 void Host::update() {
-	printf("sleeping for 1 second...\n");
 	std::this_thread::sleep_for(1s);
+	seconds_running = difftime( time(0), time_started );
 
 	music.update();
-
-	if (!music.nowplaying) music.play_new_song();
-	if (music.time_remaining == 10) {
-		say("That was such a great song. Good to hear that band finally coming together again to create something that stunning. I am really looking forward to this next song, because it's from my favorite album that just came out 10 seconds ago. I hope you like this song just as I do. It's called, bandana banana bombana. Here we go!");
+	// starting up stream
+	if (seconds_running < 12) {
+		if (seconds_running == 1) {
+			announce_start();
+		}
+	}
+	// normal stream events
+	else {
+		if (!music.nowplaying) music.play_new_song();
+		else if (music.time_remaining == 6) {
+			announce_next_song();
+		}
+		else if (seconds_running > 1200) {
+			time_started = time(0);
+		}
 	}
 }
 
 void Host::say(std::string text) {
-	//system(("lib/flite/bin/flite -voice " + vox + ' ' + '"' + ' ' + text + ' ' + '"').c_str());
-
-	std::vector<std::string> arguments = { "lib/flite/bin/flite", "-voice", vox, ("\" " + text + " \"").c_str() };
-	std::vector<char*> argv;
-	for (const auto& arg : arguments)
-	    argv.push_back((char*)arg.data());
-	argv.push_back(nullptr);
-
+	if (seconds_running > 12) music.set_song_volume(95);
 	int pid = fork();
 	if( pid < 0 ) throw;	// failed to fork
 	else if (pid == 0) {
-		execvp( argv[0], argv.data() );
+		system(("lib/flite/bin/flite -voice" + vox + "\" " + text + " \"").c_str());
+		music.set_song_volume(100);
 		_Exit(EXIT_FAILURE);
 	}
 }

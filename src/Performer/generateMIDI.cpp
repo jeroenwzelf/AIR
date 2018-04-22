@@ -55,6 +55,8 @@ std::string generateMIDI::generate(int songsize) {
 	std::cout << "generating .midi file..." << std::endl;
     file.AddLoopStart();
 
+    rnd_name();
+
     /* -- TEMPO, LENGTH, TIME SIGNATURE (4/4) -- */
     // decide tempo
     float bpm = random(75, 175);
@@ -96,7 +98,14 @@ std::string generateMIDI::generate(int songsize) {
 	    file[0].AddDelay(delay);
     }
 
-    std::string name = "newest";
+    std::string name = rnd_name();
+    for (unsigned i=0; i < name.length(); ++i) {
+    	switch(name[i]) {
+    		case ' ': name[i] = '_';		break;
+    		case '\'': name.erase(i, 1);	break;
+    		case '\"': name.erase(i, 1);	break;
+    	}
+    }
 
     file.AddLoopEnd();
     file.Finish();
@@ -111,4 +120,36 @@ std::string generateMIDI::generate(int songsize) {
     system(("rm src/RadioHost/songs/" + name + ".mid").c_str());
 
     return name;
+}
+
+std::string generateMIDI::rnd_name() {
+	using namespace curlpp::options;
+	std::ostringstream s;
+	Json::Value tracks;
+	try {
+		// GET JSON OBJECT VIA API
+		curlpp::Cleanup clnp;
+		curlpp::Easy request;
+
+		s << Url("http://metallizer.dk/api/json/");
+
+		// PARSE JSON OBJECT
+		Json::Reader reader;
+		Json::Value root;
+		if (!reader.parse(s.str().substr(20), root)) {
+			std::cout << reader.getFormattedErrorMessages();
+			throw;
+		}
+		else tracks = root["tracks"];
+	}
+	catch(curlpp::RuntimeError & e) {
+		std::cout << e.what() << std::endl;
+	}
+	catch(curlpp::LogicError & e) {
+		std::cout << e.what() << std::endl;
+	}
+	std::string name = "";
+	do { name = tracks[random(0, tracks.size())].asString();
+	} while (!name.empty());
+	return name;
 }

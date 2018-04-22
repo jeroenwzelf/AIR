@@ -48,7 +48,6 @@ void music_handler::play_new_song() {
 	}
 
 	// playing song
-	std::cout << "playing .wav file..." << std::endl;
 	std::vector<std::string> arguments = {"aplay", ("src/RadioHost/songs/" + current_song + ".wav").c_str()};
 	std::vector<char*> argv;
 	for (const auto& arg : arguments)
@@ -61,14 +60,11 @@ void music_handler::play_new_song() {
 		execvp( argv[0], argv.data() );
 		_Exit(EXIT_FAILURE);
 	}
-
-	std::cout << "playing started succesfully. " << time_remaining << " more seconds to go." << std::endl;
 	nowplaying = true;
 }
 
 void music_handler::update() {
 	if (time_remaining > 0) {
-		std::cout << "Song will be playing for " << time_remaining << " more seconds." << std::endl;
 		time_remaining--;
 	}
 	else {
@@ -76,8 +72,65 @@ void music_handler::update() {
 	}
 }
 
-void music_handler::remove_least_recent() {
+void music_handler::set_song_volume(int volume) {
+	if (nowplaying) {
+		std::array<char, 128> buffer;
+	    std::string result;
+	    std::shared_ptr<FILE> pipe(popen("pactl list sink-inputs | grep \"Sink Input\" ", "r"), pclose);
+	    if (!pipe) throw std::runtime_error("popen() failed!");
+	    while (!feof(pipe.get())) {
+	        if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+	            result += buffer.data();
+	    }
+	    result = result.substr(result.size() - 4);
+	    std::string number = "";
+	    for (auto &c : result) {
+	    	if (isInteger(std::string(1,c))) number += c;
+	    }
+	    std::string cmd = "pactl set-sink-input-volume " + number + ' ' + std::to_string(volume * 65536 / 100);
+	    system(cmd.c_str());
+	}
+}
 
+void music_handler::remove_least_recent() {
+	/*bool loaded = false;
+	struct stat leastrecent_attrib;
+
+	struct dirent *pDirent;
+    DIR *pDir;
+    pDir = opendir("src/RadioHost/songs");
+    if (pDir != NULL) {
+    	while ((pDirent = readdir(pDir)) != NULL) {
+    		if (pDirent->d_name[0] != '.') {
+				struct stat attrib;
+				stat(pDirent->d_name, &attrib);
+				char date[10];
+
+				if (!loaded) {
+					//leastrecent_attrib = attrib;
+					stat(pDirent->d_name, &leastrecent_attrib);
+					loaded = true;
+				}
+				else {
+					std::cout << "From " << pDirent->d_name << std::endl;
+					printf("%.f\n", difftime(attrib.st_mtime, leastrecent_attrib.st_mtime));
+					printf("%.f\n", difftime(leastrecent_attrib.st_mtime, attrib.st_mtime));
+					//std::cout << attrib.st_mtime << std::endl << leastrecent_attrib.st_mtime << std::endl;
+					strftime(date, 20, "%d-%m-%y", localtime(&(attrib.st_ctime)));
+					std::cout << date << std::endl;
+					strftime(date, 20, "%d-%m-%y", localtime(&(leastrecent_attrib.st_ctime)));
+					std::cout << date << std::endl;
+					//printf("%lld\n", leastrecent_attrib.st_mtime);
+				}
+
+
+				strftime(date, 20, "%d-%m-%y", localtime(&(attrib.st_ctime)));
+				printf("The file %s was last modified at %s\n", pDirent->d_name, date);
+				date[0] = 0;
+			}
+    	}
+    }
+    closedir(pDir);*/
 }
 
 int music_handler::count_songs() {

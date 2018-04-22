@@ -4,7 +4,7 @@
 
 CC=g++-7
 CPPFLAGS=-Wall -ggdb `sdl-config --cflags` -std=c++14
-LDFLAGS=`sdl-config --libs`
+LDFLAGS=`sdl-config --libs` -Llib -lcurlpp -lcurl -ljsoncpp
 
 MODULES   := Composer Performer RadioHost
 SRC_DIR   := $(addprefix src/,$(MODULES))

@@ -6,6 +6,12 @@
 #include <string>
 #include <cstring>  // For std::strlen()
 #include <cstdio>   // For std::fopen(), std::fwrite(), std::fclose()
+#include <sstream>
+#include "../../lib/json/json.h"
+
+#include <curlpp/cURLpp.hpp>
+#include <curlpp/Options.hpp>
+#include <curlpp/Easy.hpp>
 
 #include "note.h"
 #include "scale.h"
@@ -199,6 +205,7 @@ class generateMIDI {
         void play(int note, unsigned duration, unsigned patch, int vol);
         auto stop(auto it);
         void update_notes();
+        std::string rnd_name();
 
         std::vector<Note> keys_on;
         instruments::name patch_bank[16];

@@ -62,11 +62,7 @@ void band::improv_bass(int vol) {
 	for (unsigned i = 0; i < Song.beats; ++i) {
 		if (i % 8 == 0) {
 			note n = Song.layout[i]->root();
-			bassist()->part[i].push_back(Note( encode(n) + 12 * 3, 3, vol));
-		}
-		else if (i % 8 == 6) {
-			note n = Song.layout[i]->notes.at(2);
-			bassist()->part[i].push_back(Note( encode(n) + 12 * 3, 3, vol));
+			bassist()->part[i].push_back(Note( encode(n) + 12 * 3, 6, vol));
 		}
 		else bassist()->part[i].push_back(Note(-1));
 	}
@@ -111,26 +107,47 @@ void band::improv_solos(int vol) {
 	bool playingphrase;
 	bool playingnote = false;
 	int playing_timer = 0;
+	int phrases_played = 0;
+	bool soloist_1 = true;
 	for (unsigned i = 0; i < Song.beats; ++i) {
 		if (playing_timer > 0) playing_timer--;
 		else playingnote = false;
 
-		if (phrase.empty()) playingphrase = false;
+		if (phrase.empty()) { playingphrase = false; ++phrases_played; }
 
-		if (!playingphrase && chance(50)) {
+		if (!playingphrase && chance(20)) {
 			playingphrase = true;
 			for (int j = 0; j < random(1, 8); ++j) {
-				phrase.push(encode(Song.layout[i]->mode.get_step(random(1, 7))));
+				note n;
+				if (chance(40)) {
+					if (chance(25)) n = Song.layout[i]->mode.get_step(1);
+					if (chance(25)) n = Song.layout[i]->mode.get_step(3);
+					if (chance(25)) n = Song.layout[i]->mode.get_step(5);
+					if (chance(25)) n = Song.layout[i]->mode.get_step(7);
+				}
+				else n = Song.layout[i]->mode.get_step(random(1, 7));
+				phrase.push(encode(n));
+				if (chance(25) && phrases_played > static_cast<int>(i / 2)) soloist_1 = false;
 			}
 		}
 		if (playingphrase && !playingnote) {
 			playingnote = true;
 			int n = phrase.front(); phrase.pop();
 			playing_timer = random(1, 3);
-			soloist_guy_1()->part[i].push_back(Note( n + 12 * 4, playing_timer, vol ));
+			
+			if (soloist_1) {
+				soloist_guy_1()->part[i].push_back(Note( n + 12 * 4, playing_timer, vol ));
+				soloist_guy_2()->part[i].push_back(Note(-1));
+			}
+			else {
+				soloist_guy_1()->part[i].push_back(Note(-1));
+				soloist_guy_2()->part[i].push_back(Note( n + 12 * 4, playing_timer, vol ));
+			}
 		}
-		else soloist_guy_1()->part[i].push_back(Note(-1));
-		soloist_guy_2()->part[i].push_back(Note(-1));
+		else {
+			soloist_guy_1()->part[i].push_back(Note(-1));
+			soloist_guy_2()->part[i].push_back(Note(-1));
+		}
 	}
 }
 
