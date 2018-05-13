@@ -11,11 +11,13 @@ int main(int argc, char* argv[]) {
 	/* -- set flags -- */
 	static const int flagcount = 1;
 	bool TEST_SONG = false;
+	bool GENERATE_SONG = false;
 	bool ICECAST = false;
 	//bool TWITCH = false;
 	for (int i=1; i<1+flagcount; ++i) {
 		if (argc > i) {
 			if (strcmp(argv[i], "-t") == 0) TEST_SONG = true;
+			if (strcmp(argv[i], "-g") == 0) GENERATE_SONG = true;
 			if (strcmp(argv[i], "-icecast") == 0) ICECAST = true;
 			//if (strcmp(argv[i], "-twitch") == 0) TWITCH = true;
 		}
@@ -24,6 +26,9 @@ int main(int argc, char* argv[]) {
 	if (TEST_SONG) {
 		music_handler M;
 		M.play_new_song();
+	}
+	else if (GENERATE_SONG) {
+		generateMIDI().generate(random(2*170, 2*270));
 	}
 	else {
 		if (ICECAST) {

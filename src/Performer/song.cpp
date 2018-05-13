@@ -1,7 +1,12 @@
 #include "song.h"
 
-song::song(unsigned b) : p(progression( scales::random_scale() )), beats(b) { layout = new chord*[beats]; generate_layout(); }
+song::song(unsigned b) : p(progression(scales::random_scale())), beats(b) {
+	layout = new chord*[beats];
+	generate_layout();
+}
+
 song::~song() { }
+
 void song::generate_layout() {
 	p.generate(beats / 16, random(0, 100));
 

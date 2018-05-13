@@ -47,14 +47,47 @@ void band::give_instruments() {
 }
 
 void band::improv_drums(int vol) {
-	for (unsigned i = 0; i < Song.beats; ++i) {
-		if (i % 8 == 0) {
-			drummer()->part[i].push_back(Note(instruments::bass_drum_1, 1, vol));
+	if (chance(30)) {
+		bool hats = static_cast<bool>(random(0,1));
+		for (unsigned i = 0; i < Song.beats; ++i) {
+			if (i % 16 == 0 && chance(10)) hats = !hats;
+			if (hats) {
+				if (i % 8 == 6) drummer()->part[i].push_back(Note(instruments::open_hi_hat, 1, vol));
+				else if (i % 2 == 0) drummer()->part[i].push_back(Note(instruments::closed_hi_hat, 1, vol));
+			}
+			if (i % 8 == 0 || i % 8 == 3 || i % 8 == 5 || i % 8 == 7) {
+				drummer()->part[i].push_back(Note(instruments::bass_drum_1, 1, vol));
+			}
+			if (i % 8 == 2 || i%8 == 6) {
+				drummer()->part[i].push_back(Note(instruments::electric_snare, 1, vol));
+			}
+			else drummer()->part[i].push_back(Note(-1));
 		}
-		else if (i % 8 == 4) {
-			drummer()->part[i].push_back(Note(instruments::acoustic_snare, 1, vol));
+	}
+	else if (chance(30)) {
+		for (unsigned i = 0; i < Song.beats; ++i) {
+			if (i % 8 == 0 || i % 8 == 3 || i % 8 == 7) {
+				drummer()->part[i].push_back(Note(instruments::bass_drum_1, 1, vol));
+			}
+			else if (i % 8 == 4) {
+				drummer()->part[i].push_back(Note(instruments::acoustic_snare, 1, vol));
+			}
+			if (chance (70)) {
+				drummer()->part[i].push_back(Note(static_cast<instruments::drums>(random(35, 46)), 1, vol));
+			}
+			else drummer()->part[i].push_back(Note(-1));
 		}
-		else drummer()->part[i].push_back(Note(-1));
+	}
+	else {
+		for (unsigned i = 0; i < Song.beats; ++i) {
+			if (i % 8 == 0) {
+				drummer()->part[i].push_back(Note(instruments::bass_drum_1, 1, vol));
+			}
+			else if (i % 8 == 4) {
+				drummer()->part[i].push_back(Note(instruments::acoustic_snare, 1, vol));
+			}
+			else drummer()->part[i].push_back(Note(-1));
+		}
 	}
 }
 
@@ -62,6 +95,14 @@ void band::improv_bass(int vol) {
 	for (unsigned i = 0; i < Song.beats; ++i) {
 		if (i % 8 == 0) {
 			note n = Song.layout[i]->root();
+			bassist()->part[i].push_back(Note( encode(n) + 12 * 3, 6, vol));
+		}
+		else if (chance(20)) {
+			note n = Song.layout[i]->notes.at(random(0, Song.layout[i]->notes.size()-1));
+			bassist()->part[i].push_back(Note( encode(n) + 12 * 3, 6, vol));
+		}
+		if (i % 8 == 6 && chance(30)) {
+			note n = Song.layout[i]->notes.at(Song.layout[i]->notes.size()-2);
 			bassist()->part[i].push_back(Note( encode(n) + 12 * 3, 6, vol));
 		}
 		else bassist()->part[i].push_back(Note(-1));
@@ -117,17 +158,25 @@ void band::improv_solos(int vol) {
 
 		if (!playingphrase && chance(20)) {
 			playingphrase = true;
-			for (int j = 0; j < random(1, 8); ++j) {
+			int phraselength = random(1, 8);
+			for (int j = 0; j < phraselength; ++j) {
 				note n;
-				if (chance(40)) {
+				if (j-1 == phraselength) {
+					if (chance(40)) n = Song.layout[i]->mode.get_step(1);
+					else if (chance(25)) n = Song.layout[i]->mode.get_step(3);
+					else if (chance(25)) n = Song.layout[i]->mode.get_step(5);
+					else n = Song.layout[i]->mode.get_step(random(1, 5));
+				}
+				else if (chance(40)) {
 					if (chance(25)) n = Song.layout[i]->mode.get_step(1);
-					if (chance(25)) n = Song.layout[i]->mode.get_step(3);
-					if (chance(25)) n = Song.layout[i]->mode.get_step(5);
-					if (chance(25)) n = Song.layout[i]->mode.get_step(7);
+					else if (chance(25)) n = Song.layout[i]->mode.get_step(3);
+					else if (chance(25)) n = Song.layout[i]->mode.get_step(5);
+					else if (chance(25)) n = Song.layout[i]->mode.get_step(7);
+					else n = Song.layout[i]->mode.get_step(random(1, 5));
 				}
 				else n = Song.layout[i]->mode.get_step(random(1, 7));
 				phrase.push(encode(n));
-				if (chance(25) && phrases_played > static_cast<int>(i / 2)) soloist_1 = false;
+				if (chance(25) && i > static_cast<unsigned>(3 * Song.beats / 4)) soloist_1 = false;
 			}
 		}
 		if (playingphrase && !playingnote) {

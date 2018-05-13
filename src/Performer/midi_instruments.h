@@ -188,7 +188,7 @@ namespace instruments {
     };
 
     static const int bass_regular[] { 32, 33, 34, 35, 38, 39, 43 };
-    static const int bass_irregular[] { 0, 4, 7, 18, 24, 36, 37, 58, 87 };
+    static const int bass_irregular[] { 0, 4, 7, 18, 24, 58, 87 };
     static const int chord[] { 0, 1, 2, 4, 5, 7, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 40, 41, 44, 45, 48, 49, 50, 51, 52, 53, 54, 56, 61, 73, 75, 88, 89, 90, 91, 92, 93, 94, 95 };
 
     inline name random_bass() {
