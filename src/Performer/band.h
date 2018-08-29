@@ -1,8 +1,10 @@
 #pragma once
 
 #include <queue>
+#include <fstream>
+#include <string>
+#include <vector>
 
-#include "note.h"
 #include "scale.h"
 #include "chord.h"
 #include "progression.h"
@@ -13,6 +15,18 @@ struct band_member {
 	std::vector<Note>* part;
 	instruments::name instrument;
 };
+
+/*typedef drum_sequence std::map<instruments::drums, std::array<bool, 16>> {
+	{instruments::acoustic_bass_drum, NULL },
+	{instruments::acoustic_snare, NULL },
+	{instruments::closed_hi_hat, NULL },
+	{instruments::open_hi_hat, NULL },
+	{instruments::ride_cymbal_1, NULL },
+	{instruments::low_floor_tom, NULL },
+	{instruments::high_tom, NULL },
+	{instruments::crash_cymbal_1, NULL },
+	{instruments::hand_clap, NULL },
+};*/
 
 class band {
 	public:
@@ -37,4 +51,10 @@ class band {
 		void improv_arpeggio(int vol);
 		void improv_solos(int vol);
 		void improv_pad(int vol);
+
+		// styles
+		void style_random();
+		void style_piano();
+		void style_guitar();
+		void style_8bit();
 };

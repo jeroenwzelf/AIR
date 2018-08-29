@@ -14,7 +14,6 @@ namespace scales {
 
 class scale {
 	public:
-		scale(note root);
 		scale(note root, scales::type T);
 		std::vector<note> notes;
 		scales::type type;

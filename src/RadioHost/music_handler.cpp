@@ -44,23 +44,41 @@ struct pactl_entry {
 	std::string name, sample_specification;
 };
 
-music_handler::music_handler() { time_remaining = 0; }
+std::string strip_underscores(std::string s) {
+	std::replace( s.begin(), s.end(), '_', ' ');
+	return s;
+}
+
+music_handler::music_handler() {
+	discordbot_pid = 0;
+	time_remaining = 0;
+	songfile_loc = std::string(std::getenv("HOME")) + "/AIRADIO_currentsong.txt";
+}
 
 void music_handler::play_new_song() {
+	// kill old discord bot
+	if (discordbot_pid != 0) kill(discordbot_pid, SIGKILL);
+
+	nowplaying = true;
 	// generate new song
-	current_song = generateMIDI().generate(random(170, 270));
+	current_song_filename = generateMIDI().generate(random(170, 270));
+	current_song = strip_underscores(current_song_filename);
+
+	// write current song name in a file for OBS
+	std::ofstream songname_file(songfile_loc);
+	songname_file << current_song;
 
 	// get length of song
-	FILE * infile = fopen(("src/RadioHost/songs/" + current_song + ".wav").c_str(),"rb");		// Open wave file in read mode
+	FILE * infile = fopen(("src/RadioHost/songs/" + current_song_filename + ".wav").c_str(),"rb");		// Open wav file in read mode
 	header_p meta = (header_p)malloc(sizeof(header));	// header_p points to a header struct that contains the wave file metadata fields
 	if (infile) {
 		fread(meta, 1, sizeof(header), infile);
 		time_remaining = meta->subchunk2_size / meta-> byte_rate;
 	}
 
-	printf("playing new song...\n");
 	// playing song
-	std::vector<std::string> arguments = {"aplay", ("src/RadioHost/songs/" + current_song + ".wav").c_str()};
+	printf("playing new song...\n");
+	std::vector<std::string> arguments = {"aplay", ("src/RadioHost/songs/" + current_song_filename + ".wav").c_str()};
 	std::vector<char*> argv;
 	for (const auto& arg : arguments)
 	    argv.push_back((char*)arg.data());
@@ -72,7 +90,24 @@ void music_handler::play_new_song() {
 		execvp( argv[0], argv.data() );
 		_Exit(EXIT_FAILURE);
 	}
-	nowplaying = true;
+
+	start_bot();
+}
+
+void music_handler::start_bot() {
+	printf("starting up discord bot...\n");
+	std::vector<std::string> arguments = {"python3", "discord_bot/bot.py"};
+	std::vector<char*> argv;
+	for (const auto& arg : arguments)
+	    argv.push_back((char*)arg.data());
+	argv.push_back(nullptr);
+
+	discordbot_pid = fork();
+	if( discordbot_pid < 0 ) throw;	// failed to fork
+	else if (discordbot_pid == 0) {
+		execvp( argv[0], argv.data() );
+		_Exit(EXIT_FAILURE);
+	}
 }
 
 void music_handler::update() {

@@ -39,6 +39,11 @@ std::string progression::print() {
 }
 
 void progression::generate(int length) { generate(length, 0); }
+/*void progression::generate(int length, int key_change_chance) {
+	for (int i=0; i < length; ++i) {
+		add_chord(1);
+	}
+}*/
 void progression::generate(int length, int key_change_chance) {
 	clear();
 	int i = length;
@@ -77,12 +82,12 @@ void progression::generate(int length, int key_change_chance) {
 			}
 		}
 		else {
-			add_chord(get_chord_degree(random(1, 7)));
+			add_chord(random(1, 7));
 			i--;
 		}
 		if (!chords.empty() && key_change_chance > 0 && chance(key_change_chance)) {
 			change_key(scale(chords.back().root(), scales::random_scaletype()));
-			key_change_chance -= 20;
+			key_change_chance -= 5;
 		}
 	}
 }

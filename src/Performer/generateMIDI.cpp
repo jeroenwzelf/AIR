@@ -51,6 +51,7 @@ void generateMIDI::update_notes() {
 }
 
 float BPM_to_delay(float bpm) { return (-1.14 * bpm + 285.5); }
+
 std::string generateMIDI::generate(int songsize) {
 	std::cout << "generating .midi file..." << std::endl;
     file.AddLoopStart();
@@ -69,18 +70,16 @@ std::string generateMIDI::generate(int songsize) {
     printf("generating song structure\n");
     song Song(beats);
 
-    /*std::cout << "beats: " << beats << std::endl
-    			<< "bpm: " << bpm << std::endl
-    			<< "arrangement: " << Song.p.chords.size() << " chords. " << std::endl;*/
-
     /* -- CASTING BAND -- */
     printf("casting and training band...\n");
     band Band(Song);
     int patchbank = 0;
-    patch(Band.drummer()->instrument, 9);
+    patch(instruments::acoustic_piano, 9); // drummer
 	for (auto &musician : Band.band_members) {
-		if (patchbank > 0) patch(musician.instrument, patchbank-1);
-		++patchbank;
+		if (musician.instrument != instruments::no_instrument) {
+			if (patchbank > 0) patch(musician.instrument, patchbank-1);
+			++patchbank;
+		}
 	}
 
 	printf("performing song...\n");
@@ -107,7 +106,8 @@ std::string generateMIDI::generate(int songsize) {
     		case ',':
     		case ' ':
     		case '\"':
-    		case '\'': name[i] = '_';		break;
+    		case '&':
+    		case ';': name[i] = '_'; break;
     	}
     }
     std::cout << "name is " << name << std::endl;

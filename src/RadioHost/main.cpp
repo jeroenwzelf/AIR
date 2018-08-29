@@ -3,6 +3,21 @@
 #include "music_handler.h"
 #include "stream.h"
 
+void test_song() {
+	music_handler M;
+	M.play_new_song();
+}
+
+void clean_songname_file() {
+	std::ofstream songname_file(std::string(std::getenv("HOME")) + "/AIRADIO_currentsong.txt");
+	songname_file << "N/A";
+}
+
+void clean_files() {
+	clean_songname_file();
+	system("exec rm -r src/RadioHost/songs/*");
+}
+
 int main(int argc, char* argv[]) {
 	if (argc > 2) {
 		std::cout << "Only one extra argument is accepted!" << std::endl;
@@ -10,38 +25,17 @@ int main(int argc, char* argv[]) {
 	}
 	/* -- set flags -- */
 	static const int flagcount = 1;
-	bool TEST_SONG = false;
-	bool GENERATE_SONG = false;
-	bool ICECAST = false;
-	//bool TWITCH = false;
+	bool NO_FLAGS = true;
 	for (int i=1; i<1+flagcount; ++i) {
 		if (argc > i) {
-			if (strcmp(argv[i], "-t") == 0) TEST_SONG = true;
-			if (strcmp(argv[i], "-g") == 0) GENERATE_SONG = true;
-			if (strcmp(argv[i], "-icecast") == 0) ICECAST = true;
-			//if (strcmp(argv[i], "-twitch") == 0) TWITCH = true;
+			if (strcmp(argv[i], "-t") == 0) { test_song(); NO_FLAGS = false; }
+			if (strcmp(argv[i], "-g") == 0) { generateMIDI().generate(random(2*170, 2*270)); NO_FLAGS = false; }
+			if (strcmp(argv[i], "-c") == 0) { clean_files(); NO_FLAGS = false; }
 		}
 	}
-
-	if (TEST_SONG) {
-		music_handler M;
-		M.play_new_song();
-	}
-	else if (GENERATE_SONG) {
-		generateMIDI().generate(random(2*170, 2*270));
-	}
-	else {
-		if (ICECAST) {
-			system("/etc/init.d/icecast2 start");
-			int pid = fork();
-			if( pid < 0 ) throw;	// failed to fork
-			else if (pid == 0) {
-				system("darkice -c ./lib/darkice.cfg");
-				_Exit(EXIT_FAILURE);
-			}
-		}
-		//else if (TWITCH) system("./twitch_streaming.sh");
-		std::cout << "Starting stream..." << std::endl;
+	if (NO_FLAGS) {
+		clean_songname_file();
+		printf("Starting stream...\n");
 		stream S;
 		S.start_stream();
 	}

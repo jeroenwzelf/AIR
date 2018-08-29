@@ -4,10 +4,6 @@
 
 #include "note.h"
 #include "Host.h"
-#include "RYAN_ELWICK.h"
-#include "TAVISH_DEGROOT.h"
-#include "MICHELLE_ADAMS.h"
-#include "STEVEN_HAWKING.h"
 
 class stream {
 	public:
@@ -15,6 +11,6 @@ class stream {
 		bool callback();
 		void stop_stream();
 	private:
-		std::shared_ptr<Host> host;
+		Host* host;
 		bool streaming;
 };

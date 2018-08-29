@@ -15,12 +15,29 @@
 
 namespace hosts {
 	enum name { Ryan_Elwick, Tavish_DeGroot, Michelle_Adams, Steven_Hawking };
-	std::ostream &operator<<(std::ostream& s, const name& n);
+	inline std::string vox_of(const hosts::name &n) {
+		switch (n) {
+			case hosts::name::Ryan_Elwick:		return "rms";	break;
+			case hosts::name::Tavish_DeGroot:	return "awb";	break;
+			case hosts::name::Michelle_Adams:	return "slt";	break;
+			case hosts::name::Steven_Hawking:	return "kal";	break;
+		}
+		return "";
+	}
+	inline std::string name_of(const hosts::name &n) {
+		switch(n) {
+			case hosts::name::Ryan_Elwick:		return "Ryan Elwick";		break;
+			case hosts::name::Tavish_DeGroot:	return "Tavish De Groot";	break;
+			case hosts::name::Michelle_Adams:	return "Michelle Adams";	break;
+			case hosts::name::Steven_Hawking:	return "Steven Hawking";	break;
+		}
+		return "-";
+	}
 }
 
 class Host {
 	public:
-		Host() {}
+		Host(hosts::name n);
 		hosts::name name;
 		void start_stream();
 	protected:
@@ -32,6 +49,6 @@ class Host {
 		time_t seconds_running;
 		music_handler music;
 
-		virtual void announce_start() = 0;
-		virtual void announce_next_song() = 0;
+		void announce_start();
+		void announce_next_song();
 };

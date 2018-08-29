@@ -135,7 +135,8 @@ namespace instruments {
         helicopter,
         applause,
         gunshot,
-        SIZE
+        SIZE,
+        no_instrument
     };
     enum drums {
         acoustic_bass_drum = 35,
