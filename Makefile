@@ -44,5 +44,6 @@ $(BUILD_DIR):
 
 clean:
 	@rm -rf $(BUILD_DIR)
+	./AIR -c
 
 $(foreach bdir,$(BUILD_DIR),$(eval $(call make-goal,$(bdir))))
