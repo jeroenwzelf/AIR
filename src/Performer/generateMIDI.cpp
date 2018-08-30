@@ -77,7 +77,8 @@ std::string generateMIDI::generate(int songsize) {
     patch(instruments::acoustic_piano, 9); // drummer
 	for (auto &musician : Band.band_members) {
 		if (musician.instrument != instruments::no_instrument) {
-			if (patchbank > 0) patch(musician.instrument, patchbank-1);
+			if (patchbank == 9) ++patchbank;
+			if (patchbank > 0 ) patch(musician.instrument, patchbank-1);
 			++patchbank;
 		}
 	}

@@ -52,7 +52,7 @@ std::string strip_underscores(std::string s) {
 music_handler::music_handler() {
 	discordbot_pid = 0;
 	time_remaining = 0;
-	songfile_loc = std::string(std::getenv("HOME")) + "/AIRADIO_currentsong.txt";
+	songfile_loc = std::string(std::getenv("HOME")) + "/airadio/currentsong.txt";
 }
 
 void music_handler::play_new_song() {

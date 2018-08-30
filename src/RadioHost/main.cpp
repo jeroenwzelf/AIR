@@ -9,8 +9,12 @@ void test_song() {
 }
 
 void clean_songname_file() {
-	std::ofstream songname_file(std::string(std::getenv("HOME")) + "/AIRADIO_currentsong.txt");
+	std::ofstream dislikes_file(std::string(std::getenv("HOME")) + "/airadio/status_dislikes.txt");
+	std::ofstream songname_file(std::string(std::getenv("HOME")) + "/airadio/currentsong.txt");
+	std::ofstream likes_file(std::string(std::getenv("HOME")) + "/airadio/status_likes.txt");
 	songname_file << "N/A";
+	dislikes_file << "0";
+	likes_file << "0";
 }
 
 void clean_files() {

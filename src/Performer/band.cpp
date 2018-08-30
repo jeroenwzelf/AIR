@@ -119,7 +119,7 @@ void band::style_8bit() {
 
 void band::improv_drums(int vol) {
 	if (drummer()->instrument != instruments::no_instrument) {
-		if (chance(100)) {
+		if (chance(20)) {
 			for (unsigned i = 0; i < Song.beats; ++i) {
 				if (i < 64) drummer()->part[i].push_back(Note(-1));
 				if (i % 8 == 0) {
