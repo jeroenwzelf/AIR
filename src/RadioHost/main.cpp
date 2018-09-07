@@ -1,6 +1,8 @@
 #include <iostream>
+#include <experimental/filesystem>
 
 #include "music_handler.h"
+#include "global_info.h"
 #include "stream.h"
 
 void test_song() {
@@ -19,7 +21,9 @@ void clean_songname_file() {
 
 void clean_files() {
 	clean_songname_file();
-	system("exec rm -r src/RadioHost/songs/*");
+	std::experimental::filesystem::path path("src/RadioHost/songs/");
+	if (!std::experimental::filesystem::is_empty(path))
+		system("exec rm -r src/RadioHost/songs/*");
 }
 
 int main(int argc, char* argv[]) {
@@ -35,6 +39,8 @@ int main(int argc, char* argv[]) {
 			if (strcmp(argv[i], "-t") == 0) { test_song(); NO_FLAGS = false; }
 			if (strcmp(argv[i], "-g") == 0) { generateMIDI().generate(random(2*170, 2*270)); NO_FLAGS = false; }
 			if (strcmp(argv[i], "-c") == 0) { clean_files(); NO_FLAGS = false; }
+			if (strcmp(argv[i], "-d") == 0) { global_info::getInstance().setIsDebugging(true); }
+			if (strcmp(argv[i], "-o") == 0) { global_info::getInstance().setIsOnline(true); }
 		}
 	}
 	if (NO_FLAGS) {

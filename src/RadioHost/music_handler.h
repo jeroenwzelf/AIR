@@ -10,6 +10,7 @@
 
 #include "note.h"
 #include "generateMIDI.h"
+#include "global_info.h"
 
 class music_handler {
 	public:

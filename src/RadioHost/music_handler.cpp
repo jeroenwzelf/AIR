@@ -91,7 +91,7 @@ void music_handler::play_new_song() {
 		_Exit(EXIT_FAILURE);
 	}
 
-	start_bot();
+	if (!global_info::getInstance().getIsDebugging() && global_info::getInstance().getIsOnline()) start_bot();
 }
 
 void music_handler::start_bot() {

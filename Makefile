@@ -3,8 +3,8 @@
 # https://stackoverflow.com/questions/231229/how-to-generate-a-makefile-with-source-in-sub-directories-using-just-one-makefil
 
 CC=g++-7
-CPPFLAGS=-Wall -ggdb `sdl-config --cflags` -std=c++14
-LDFLAGS=`sdl-config --libs` -Llib -lcurlpp -lcurl -ljsoncpp
+CPPFLAGS=-Wall -ggdb `sdl-config --cflags` -std=c++17
+LDFLAGS=`sdl-config --libs` -Llib -lcurlpp -lcurl -ljsoncpp -lstdc++fs
 
 MODULES   := Composer Performer RadioHost
 SRC_DIR   := $(addprefix src/,$(MODULES))
