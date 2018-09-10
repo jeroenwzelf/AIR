@@ -86,7 +86,7 @@ void music_handler::play_new_song() {
 	if (!global_info::getInstance().getIsDebugging()
 		&& global_info::getInstance().getIsOnline()) {
 		printf("starting up discord bot...\n");
-		fork_new_program({"python3", "discord_bot/bot.py"});
+		fork_new_program({"python3", "discord_bot/pollingbot.py"});
 	}
 		
 }

@@ -9,7 +9,6 @@ song::~song() { }
 
 // for song structure (and placing each chord into a variable number of beats)
 void song::generate_layout() {
-	printf("%i\n", beats);
 	int total = beats / 16;
 	scale root = scales::random_scale();
 

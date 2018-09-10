@@ -3,17 +3,10 @@
 # @2018
 
 import os			# finding home directory
-import sys			# command line arguments
 import asyncio		# async, await
-import opuslib 		# broadcasting on voice channel
 import discord		# discord bot API
 from discord.ext import commands
 from discord.ext.commands import Bot
-
-def enable_debugging_flag():
-	if len(sys.argv) == 1:
-		return False
-	return sys.argv[1] == "-d"
 
 def read_file(txtfile):
 	file = open(os.path.join(os.path.expanduser('~'),"airadio/" + txtfile), "r")
@@ -24,14 +17,11 @@ def write_file(txtfile, txt):
 	file.write(str(txt))
 
 bot = commands.Bot(command_prefix='#')
-voice_channel = discord.Object('484765885215670273')	# voice channel ID (for stream audio)
-vote_channel = discord.Object('484387225027477507')		# vote channel ID (for txt feedback)
+vote_channel = discord.Object('484387225027477507')		# vote channel ID
 
 song_title = read_file('currentsong.txt')
-stream_url = read_file('streamurl.txt')
-bot_key = read_file('botkey.txt')
+bot_key = read_file('pollingbotkey.txt')
 
-debugging = enable_debugging_flag()
 users_already_voted = []
 dislikes = 0
 likes = 0
@@ -44,8 +34,6 @@ async def on_ready():
 	updatestatus()
 	await clear_messages()
 	await initial_message()
-	if not debugging:
-		await stream_in_voice_channel()
 	print(bot.user.name + " is up and running...")
 
 # -------- BOT COMMANDS --------
@@ -94,15 +82,6 @@ async def paasei(ctx):
 
 
 # -------- OTHER FUNCTIONS --------
-
-# streams audio of twitch stream in voice_channel of discord
-async def stream_in_voice_channel():
-	vc = await bot.join_voice_channel(voice_channel)
-	player = await vc.create_ytdl_player(stream_url)
-	player.start()
-	await asyncio.sleep(6)
-	if not vc.is_playing():
-		await vc.disconnect()
 
 # updates likes and dislikes files
 def updatestatus():
