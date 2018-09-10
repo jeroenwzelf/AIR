@@ -37,18 +37,14 @@ namespace hosts {
 
 class Host {
 	public:
-		Host(hosts::name n);
+		Host(hosts::name n, music_handler* m);
 		hosts::name name;
-		void start_stream();
-	protected:
-		std::string vox;
-		void say(std::string);
-		void update();
-
-		time_t time_started;
-		time_t seconds_running;
-		music_handler music;
 
 		void announce_start();
-		void announce_next_song();
+		void announce_next_song(std::string songname);
+	protected:
+		std::string vox;
+		music_handler* music;
+		void say(std::string);
+		void update();
 };

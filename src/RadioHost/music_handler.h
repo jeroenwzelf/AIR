@@ -15,9 +15,11 @@
 class music_handler {
 	public:
 		music_handler();
+		void update();
+
 		void play_new_song();
 		void set_song_volume(int volume);
-		void update();
+		void stop_song();
 
 		bool nowplaying;
 		int time_remaining;
@@ -25,6 +27,6 @@ class music_handler {
 		std::string current_song_filename;
 		std::string songfile_loc;
 	private:
-		void start_bot();
-		int discordbot_pid;
+		int fork_new_program(std::vector<std::string> arguments);
+		int aplay_pid, discordbot_pid;
 };

@@ -1,5 +1,6 @@
 #include "music_handler.h"
 
+// .wav file structure
 typedef struct header_file
 {
     char chunk_id[4];
@@ -56,10 +57,11 @@ music_handler::music_handler() {
 }
 
 void music_handler::play_new_song() {
+	nowplaying = true;
+
 	// kill old discord bot
 	if (discordbot_pid != 0) kill(discordbot_pid, SIGKILL);
 
-	nowplaying = true;
 	// generate new song
 	current_song_filename = generateMIDI().generate(random(170, 270));
 	current_song = strip_underscores(current_song_filename);
@@ -73,12 +75,23 @@ void music_handler::play_new_song() {
 	header_p meta = (header_p)malloc(sizeof(header));	// header_p points to a header struct that contains the wave file metadata fields
 	if (infile) {
 		fread(meta, 1, sizeof(header), infile);
-		time_remaining = meta->subchunk2_size / meta-> byte_rate;
+		time_remaining = meta->subchunk2_size / meta->byte_rate;
 	}
 
 	// playing song
 	printf("playing new song...\n");
-	std::vector<std::string> arguments = {"aplay", ("src/RadioHost/songs/" + current_song_filename + ".wav").c_str()};
+	aplay_pid = fork_new_program({"aplay", ("src/RadioHost/songs/" + current_song_filename + ".wav").c_str()});
+
+	// starting bot
+	if (!global_info::getInstance().getIsDebugging()
+		&& global_info::getInstance().getIsOnline()) {
+		printf("starting up discord bot...\n");
+		fork_new_program({"python3", "discord_bot/bot.py"});
+	}
+		
+}
+
+int music_handler::fork_new_program(std::vector<std::string> arguments) {
 	std::vector<char*> argv;
 	for (const auto& arg : arguments)
 	    argv.push_back((char*)arg.data());
@@ -86,33 +99,25 @@ void music_handler::play_new_song() {
 
 	int pid = fork();
 	if( pid < 0 ) throw;	// failed to fork
-	else if (pid == 0) {
+	else if (pid == 0) {	// forked child
 		execvp( argv[0], argv.data() );
 		_Exit(EXIT_FAILURE);
 	}
-
-	if (!global_info::getInstance().getIsDebugging() && global_info::getInstance().getIsOnline()) start_bot();
-}
-
-void music_handler::start_bot() {
-	printf("starting up discord bot...\n");
-	std::vector<std::string> arguments = {"python3", "discord_bot/bot.py"};
-	std::vector<char*> argv;
-	for (const auto& arg : arguments)
-	    argv.push_back((char*)arg.data());
-	argv.push_back(nullptr);
-
-	discordbot_pid = fork();
-	if( discordbot_pid < 0 ) throw;	// failed to fork
-	else if (discordbot_pid == 0) {
-		execvp( argv[0], argv.data() );
-		_Exit(EXIT_FAILURE);
-	}
+	return pid;
 }
 
 void music_handler::update() {
 	if (time_remaining > 0) time_remaining--;
 	else nowplaying = false;
+}
+
+void music_handler::stop_song() {
+	kill(aplay_pid, SIGKILL);
+	nowplaying = false;
+	time_remaining = 0;
+
+	std::ofstream songname_file(songfile_loc);
+	songname_file << "N/A";
 }
 
 void music_handler::set_song_volume(int volume) {
@@ -139,13 +144,3 @@ void music_handler::set_song_volume(int volume) {
 	    }
 	}
 }
-
-/*int music_handler::count_songs() {
-    int len = 0;
-    struct dirent *pDirent;
-    DIR *pDir;
-    pDir = opendir("src/RadioHost/songs");
-    if (pDir != NULL) while ((pDirent = readdir(pDir)) != NULL) len++;
-    closedir(pDir);
-    return len;
-}*/

@@ -4,13 +4,19 @@
 
 #include "note.h"
 #include "Host.h"
+#include "music_handler.h"
 
 class stream {
 	public:
+		stream();
 		void start_stream();
-		bool callback();
 		void stop_stream();
 	private:
-		Host* host;
+		void update();
 		bool streaming;
+		time_t time_started;
+		time_t seconds_running;
+		
+		Host* host;
+		music_handler* music;
 };
