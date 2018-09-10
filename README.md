@@ -29,3 +29,6 @@ Discord bot:
 	[x] Basic voting system functionality
 	[x] Saving votes from each user
 	[x] Plays radio in voice channel (from a radio broadcast url)
+		[ ] different bot with continuous broadcast in channel
+Server:
+	[ ] Buy a server that hosts the stream full time

@@ -22,6 +22,7 @@ struct song {
 	void generate_layout();
 	~song();
 
+	progression chordprogression;
 	chord** layout;
 	unsigned beats;
 };

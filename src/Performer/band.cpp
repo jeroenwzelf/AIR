@@ -177,6 +177,7 @@ void band::improv_drums(int vol) {
 	else {
 		for (unsigned i = 0; i < Song.beats; ++i)
 			drummer()->part[i].push_back(Note(-1));
+		drummer()->instrument = instruments::acoustic_piano;
 	}
 }
 
