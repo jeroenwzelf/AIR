@@ -39,8 +39,8 @@ int main(int argc, char* argv[]) {
 			if (strcmp(argv[i], "-t") == 0) { test_song(); NO_FLAGS = false; }
 			if (strcmp(argv[i], "-g") == 0) { generateMIDI().generate(random(2*170, 2*270)); NO_FLAGS = false; }
 			if (strcmp(argv[i], "-c") == 0) { clean_files(); NO_FLAGS = false; }
-			if (strcmp(argv[i], "-d") == 0) { global_info::getInstance().setIsDebugging(true); }
-			if (strcmp(argv[i], "-o") == 0) { global_info::getInstance().setIsOnline(true); }
+			if (strcmp(argv[i], "-D") == 0) { global_info::getInstance().setIsDebugging(true); }
+			if (strcmp(argv[i], "-d") == 0) { global_info::getInstance().setDiscordEnabled(true); }
 		}
 	}
 	if (NO_FLAGS) {

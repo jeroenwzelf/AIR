@@ -1,8 +1,13 @@
 # AIR - Artificial Intelligence Radio
-A C++ project that composes music, performs it via MIDI, converts it to .wav and hosts continuous newly generated music.
+A C++ project that composes music, performs it via MIDI, converts it to .wav and hosts continuous newly generated music. It uses Discord integration to get votes for a neural network that help AIR generate better music.
 
 ## Running AIR
 * Download the repository
+* install the apt aplay package
+* If you are planning on running with discord integration:
+  * make the file $HOME/airadio/broadcastbotkey.txt
+  * make the file $HOME/airadio/pollingbotkey.txt
+  * install the apt python3 package
 * make and run *'./AIR'* in a terminal.
 See the man page for any program options and other info
 
@@ -25,10 +30,9 @@ See the man page for any program options and other info
 - [x] Random hosts with different voices
 - [x] Plays audio according to typical radio format (host announces song, song plays, host says something, next song plays, etc)
   - [x] Manages the discord bot
-### Discord bot:
-- [x] Basic voting system functionality
+### Discord integration:
+- [x] Basic voting system bot functionality
 - [x] Saving votes from each user
-- [x] Plays radio in voice channel (from a radio broadcast url)
-  - [x] different bot with continuous broadcast in channel
+- [x] Bot that continously plays radio in voice channel (from a radio broadcast url)
 ### Server:
  - [ ] Buy a server that hosts the stream full time

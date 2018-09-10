@@ -5,8 +5,8 @@ class global_info {
 		void setIsDebugging(bool b) { DEBUG = b; }
 		bool getIsDebugging() { return DEBUG; }
 
-		void setIsOnline(bool b) { ISONLINE = b; }
-		bool getIsOnline() { return ISONLINE; }
+		void setDiscordEnabled(bool b) { DISCORDENABLED = b; }
+		bool getDiscordEnabled() { return DISCORDENABLED; }
 
 		static global_info& getInstance() {
 			static global_info instance;
@@ -16,7 +16,7 @@ class global_info {
 		global_info(global_info const&) = delete;
 		void operator=(global_info const&) = delete;
 	private:
-		global_info() { DEBUG = false; ISONLINE = false; }
+		global_info() { DEBUG = false; DISCORDENABLED = false; }
 		bool DEBUG;
-		bool ISONLINE;
+		bool DISCORDENABLED;
 };

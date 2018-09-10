@@ -9,8 +9,8 @@ std::string operator+(const char* lhs, const std::string &rhs) {
 
 Host::Host(hosts::name n, music_handler* m) {
 	name = n;
-	vox = hosts::vox_of(n);
 	music = m;
+	vox = hosts::vox_of(n);
 }
 
 void Host::say(std::string text) {
